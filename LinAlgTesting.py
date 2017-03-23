@@ -12,7 +12,7 @@ print(b)
 
 c = b @ a
 print(c)"""
-index = 1
+index = 0
 
 basis_size = 100
 
@@ -27,15 +27,20 @@ f_mean  = np.expand_dims(np.mean(f_re, axis=0), axis=0)
 #print(f_mean.shape)
 print((np.ones((sh[0]*sh[1],1)) @ f_mean).shape)
 f_mean_centered = (f_re - (np.ones((sh[0]*sh[1],1)) @ f_mean))
-#####################################################################################
+
 #print(f_mean_centered)
 f_cov = (f_mean_centered.T @ f_mean_centered) / (sh[1]*sh[0])
 [lambs, evecs] = np.linalg.eig(f_cov)
 [lambs, evecs] = np.real(lambs), np.real(evecs)
 print('evecs*evecs.T presorting: ')
 print(evecs @ evecs.T)
-to_be_sorted = np.hstack((np.expand_dims(lambs,1), evecs))
-evecs = np.sort(to_be_sorted,axis=0)[::-1,1:]
+
+###############################################################
+
+idx = lambs.argsort()[::-1]
+eigenValues = lambs[idx]
+evecs = evecs[:,idx]
+#to_be_sorted = np.hstack((np.expand_dims(lambs,1), evecs))
 
 print('evecs*evecs.T sorting:')
 print(evecs @ evecs.T)
@@ -46,8 +51,8 @@ print(evecs @ evecs.T)
 evecs2 = f_mean_centered @ evecs
 face_basis = evecs2 / np.linalg.norm(evecs2, axis=0)
 
-eig_face_1 = np.reshape(np.real(face_basis[:,1]), (sh[0], sh[1]))
-scipy.misc.imsave('eigenFace1.png', eig_face_1)
+#eig_face_1 = np.reshape(np.real(face_basis[:,1]), (sh[0], sh[1]))
+#scipy.misc.imsave('eigenFace1.png', eig_face_1)
 faces_proj = f_re.T @ face_basis
 print('faces reshape data:')
 print(f_re.shape)
