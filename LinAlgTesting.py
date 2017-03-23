@@ -4,6 +4,8 @@ import scipy.misc
 import matplotlib.pyplot as plt
 from math import sqrt
 
+
+
 """a = np.array([[1,2,3],[4,5,6]])
 b = np.array([[1, -1], [1, 1]])
 
@@ -12,11 +14,11 @@ print(b)
 
 c = b @ a
 print(c)"""
-index = 0
-
-basis_size = 100
+input_face_index = 200
+basis_size = 60
 
 mat = scipy.io.loadmat('face_detect.mat')
+
 #type(mat)
 face_data = mat['faces_train']
 sh = face_data.shape
@@ -63,28 +65,24 @@ print(faces_proj.shape)
 
 faces_predictor = faces_proj[:,:basis_size]
 
-face_data_1 = np.expand_dims(faces_predictor[index,:],axis=0) @ face_basis[:,:basis_size].T
-face_1 = np.reshape(face_data_1, (sh[0], sh[1]))
-scipy.misc.imsave('FaceTest1.png', face_1)
+#face_data_1 = np.expand_dims(faces_predictor[index,:],axis=0) @ face_basis[:,:basis_size].T
+#face_1 = np.reshape(face_data_1, (sh[0], sh[1]))
+#scipy.misc.imsave('FaceTest1.png', face_1)
 
 print(face_basis.T @ face_basis)
 
+input_face = np.expand_dims(f_re[:,input_face_index], axis=0)
 
-"""print('lambs: ')
-print(lambs)
-print('u: ')
-print(u.shape)
+input_face_eig = input_face @ face_basis[:,:basis_size]
 
-print(f_cov)
-print(u)"""
+print("Input face eigenvector weights:")
+print(input_face_eig)
 
+eigen_weight_diffs = (np.ones((sh[2],1)) @ input_face_eig) - faces_predictor
 
+dists = np.linalg.norm(eigen_weight_diffs, axis=1)
+print(dists.shape)
+face_guess_ind = np.argmin(dists)
+print(face_guess_indX)
 
-"""f_ave_data = f_re @ (np.ones((sh[2],1)))/sh[2]
-f_ave = np.reshape(f_ave_data,(sh[0], sh[1]))
-scipy.misc.imsave('outfile.png', f_ave)
-
-## Test Eig and Covarience
-#[v, d] = np.linalg.eig(f_re)
-print(v)
-print(d)"""
+#for i in range(len(faces_predictor)):
