@@ -12,6 +12,9 @@ print(b)
 
 c = b @ a
 print(c)"""
+index = 1
+
+basis_size = 100
 
 mat = scipy.io.loadmat('face_detect.mat')
 #type(mat)
@@ -26,12 +29,34 @@ f_mean_centered = f_re - (np.ones((sh[0]*sh[1],1)) @ f_mean)/sqrt(sh[0]*sh[1])
 #print(f_mean_centered)
 f_cov = (np.transpose(f_mean_centered) @ f_mean_centered) / (sh[0]*sh[1])
 [lambs, evecs] = np.linalg.eig(f_cov)
-evecs2 = f_mean_centered @ evecs
-evecs2 = evecs2 / np.linalg.norm(evecs2, axis=0)
-print('evecs2: ')
-print(evecs2.shape)
+[lambs, evecs] = np.real(lambs), np.real(evecs)
+to_be_sorted = np.hstack((np.expand_dims(lambs,1), evecs))
+evecs = np.sort(to_be_sorted,axis=0)[::-1,1:]
 
-print((evecs2.T @ evecs2))
+
+#print(lambs.shape)
+#print(evecs.shape)
+evecs2 = f_mean_centered @ evecs
+face_basis = evecs2 / np.linalg.norm(evecs2, axis=0)
+
+eig_face_1 = np.reshape(np.real(face_basis[:,1]), (sh[0], sh[1]))
+scipy.misc.imsave('eigenFace1.png', eig_face_1)
+faces_proj = f_re.T @ face_basis
+print('faces reshape data:')
+print(f_re.shape)
+print('faces basis: ')
+print(face_basis.shape)
+print('faces projection:')
+print(faces_proj.shape)
+
+faces_predictor = faces_proj[:,:basis_size]
+
+face_data_1 = np.expand_dims(faces_predictor[index,:],axis=0) @ face_basis[:,:basis_size].T
+face_1 = np.reshape(face_data_1, (sh[0], sh[1]))
+scipy.misc.imsave('FaceTest1.png', face_1)
+
+print(face_basis.T @ face_basis)
+
 
 """print('lambs: ')
 print(lambs)
