@@ -18,6 +18,7 @@ faces_test_hard = mat['faces_test_hard']
 names_test_hard = mat['names_test_hard']
 sh = faces_train.shape
 
+
 f_re = np.reshape(faces_train,(sh[0]*sh[1], sh[2]))
 f_mean  = np.expand_dims(np.mean(f_re, axis=0), axis=0)
 #print(f_mean.shape)
@@ -53,10 +54,47 @@ print('Done creating basis, loading test image...')
 
 
 
-input_face_index = 5
+input_face_index = 8
 
-test_faces = faces_test_easy
-test_names = names_test_easy
+test_faces = faces_test_hard
+test_names = names_test_hard
+
+rotated_test_names = [['\x00' for i in range(len(test_names))] for j in range(max([len(test_names[i]) for i in range(len(test_names)-1)]))]
+
+for i in range(len(test_names)):
+    for j in range(len(test_names[i])):
+        rotated_test_names[j][i] = test_names[i][j]
+
+new_test_names = [""] * len(rotated_test_names)
+        
+for i in range(len(rotated_test_names)):
+    for j in range(len(rotated_test_names[i])):
+        if rotated_test_names[i][j] == '\x00':
+            break
+        else:
+            new_test_names[i] += rotated_test_names[i][j]
+
+test_names = new_test_names
+
+train_names = names_train
+
+rotated_train_names = [['\x00' for i in range(len(train_names))] for j in range(max([len(train_names[i]) for i in range(len(train_names)-1)]))]
+
+for i in range(len(train_names)):
+    for j in range(len(train_names[i])):
+        rotated_train_names[j][i] = train_names[i][j]
+
+new_train_names = [""] * len(rotated_train_names)
+        
+for i in range(len(rotated_train_names)):
+    for j in range(len(rotated_train_names[i])):
+        if rotated_train_names[i][j] == '\x00':
+            break
+        else:
+            new_train_names[i] += rotated_train_names[i][j]
+
+train_names = new_train_names
+
 
 tsh = test_faces.shape
 test_faces = np.reshape(test_faces, (tsh[0]*tsh[1], tsh[2]))
@@ -74,5 +112,7 @@ eigen_weight_diffs = (np.ones((sh[2],1)) @ input_face_eig) - faces_predictor
 dists = np.linalg.norm(eigen_weight_diffs, axis=1)
 face_guess_ind = np.argmin(dists)
 
-print('Face guess: ' + str(face_guess_ind))
+print('Face real name: ' + test_names[input_face_index])
+print('Face recognized name: ' + train_names[face_guess_ind])
+
 
