@@ -25,13 +25,21 @@ sh = face_data.shape
 f_re = np.reshape(face_data,(sh[0]*sh[1], sh[2]))
 f_mean  = np.expand_dims(np.mean(f_re, axis=0), axis=0)
 #print(f_mean.shape)
-f_mean_centered = f_re - (np.ones((sh[0]*sh[1],1)) @ f_mean)/sqrt(sh[0]*sh[1])
+print((np.ones((sh[0]*sh[1],1)) @ f_mean).shape)
+f_mean_centered = (f_re - (np.ones((sh[0]*sh[1],1)) @ f_mean))
+print("mean: ")
+print(np.mean(f_mean_centered, axis=0))
 #print(f_mean_centered)
-f_cov = (np.transpose(f_mean_centered) @ f_mean_centered) / (sh[0]*sh[1])
+f_cov = (np.transpose(f_mean_centered) @ f_mean_centered) / (sh[2])
 [lambs, evecs] = np.linalg.eig(f_cov)
 [lambs, evecs] = np.real(lambs), np.real(evecs)
+print('evecs*evecs.T presorting: ')
+print(evecs*evecs.T)
 to_be_sorted = np.hstack((np.expand_dims(lambs,1), evecs))
 evecs = np.sort(to_be_sorted,axis=0)[::-1,1:]
+
+print('evecs*evecs.T sorting:')
+print(evecs*evecs.T)
 
 
 #print(lambs.shape)
