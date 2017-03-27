@@ -3,12 +3,15 @@ import scipy.io
 import scipy.misc
 import matplotlib.pyplot as plt
 from math import sqrt
+from datetime import datetime
+
+starttime = datetime.now()
 
 basis_size = 40
 
 print("Loading and preparing training  data...")
 
-mat = scipy.io.loadmat('face_detect.mat')
+mat = scipy.io.loadmat('face_detect_demo.mat')
 
 faces_train = mat['faces_train']
 names_train = mat['names_train']
@@ -48,11 +51,12 @@ faces_predictor = faces_proj[:,:basis_size]
 #face_1 = np.reshape(face_data_1, (sh[0], sh[1]))
 #scipy.misc.imsave('FaceTest1.png', face_1)
 
+print('Preparation took ' + str(datetime.now() - starttime))
 print('Done creating basis, loading test image...')
 
 ##################################################################################
 
-
+starttime = datetime.now()
 
 input_face_index = 8
 
@@ -124,3 +128,4 @@ for i in range(tsh[2]):
 
 
 print("Correct guesses: " + str(correct_count) + "/" + str(tsh[2]))
+print("Recognition took " + str(datetime.now() - starttime))
