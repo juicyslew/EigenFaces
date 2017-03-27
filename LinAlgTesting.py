@@ -4,7 +4,7 @@ import scipy.misc
 import matplotlib.pyplot as plt
 from math import sqrt
 
-basis_size = 60
+basis_size = 40
 
 print("Loading and preparing training  data...")
 
@@ -114,11 +114,13 @@ for i in range(tsh[2]):
     dists = np.linalg.norm(eigen_weight_diffs, axis=1)
     face_guess_ind = np.argmin(dists)
     
-    #print('Face real name: ' + test_names[i])
-    #print('Face recognized name: ' + train_names[face_guess_ind])
 
     if test_names[i] == train_names[face_guess_ind]:
         correct_count += 1
+    else:
+            print('Face real name: ' + test_names[i])
+            print('Face recognized name: ' + train_names[face_guess_ind])
 
 
-print("Correct guesses: " + str(correctCount) + "/" + str(tsh[2]))
+
+print("Correct guesses: " + str(correct_count) + "/" + str(tsh[2]))
