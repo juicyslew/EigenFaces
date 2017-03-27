@@ -99,20 +99,26 @@ train_names = new_train_names
 tsh = test_faces.shape
 test_faces = np.reshape(test_faces, (tsh[0]*tsh[1], tsh[2]))
 
-input_face = np.expand_dims(test_faces[:,input_face_index], axis=0)
+correct_count = 0
 
-print('Calculating test eigensystem...')
+print('Testing faces...')
 
-input_face_eig = input_face @ face_basis[:,:basis_size]
+for i in range(tsh[2]):
+    input_face = np.expand_dims(test_faces[:,i], axis=0)
+    
+    #print('Calculating test eigensystem...')
+    input_face_eig = input_face @ face_basis[:,:basis_size]
+    
+    #print('Classifying face...')
+    eigen_weight_diffs = (np.ones((sh[2],1)) @ input_face_eig) - faces_predictor
+    dists = np.linalg.norm(eigen_weight_diffs, axis=1)
+    face_guess_ind = np.argmin(dists)
+    
+    #print('Face real name: ' + test_names[i])
+    #print('Face recognized name: ' + train_names[face_guess_ind])
 
-print('Classifying face...')
-
-eigen_weight_diffs = (np.ones((sh[2],1)) @ input_face_eig) - faces_predictor
-
-dists = np.linalg.norm(eigen_weight_diffs, axis=1)
-face_guess_ind = np.argmin(dists)
-
-print('Face real name: ' + test_names[input_face_index])
-print('Face recognized name: ' + train_names[face_guess_ind])
+    if test_names[i] == train_names[face_guess_ind]:
+        correct_count += 1
 
 
+print("Correct guesses: " + str(correctCount) + "/" + str(tsh[2]))
